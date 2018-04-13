@@ -17,6 +17,7 @@ import org.apache.bcel.util.InstructionFinder;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.TargetLostException;
 
+/**original skeleton code from project brief edited by lucywalsh**/
 
 
 public class ConstantFolder
@@ -26,31 +27,49 @@ public class ConstantFolder
 
 	JavaClass original = null;
 	JavaClass optimized = null;
-
+	
 	public ConstantFolder(String classFilePath)
-	{
+	{//done
 		try{
 			this.parser = new ClassParser(classFilePath);
 			this.original = this.parser.parse();
-			this.gen = new ClassGen(this.original);
+			this.cgen = new ClassGen(this.original);
+			this.cpgen = gen.getConstantPool();
+			this.SimpleFolder = new SimpleFolder(ClassGen cgen, ConstantPoolGen cpgen);
+			this.VariableFolder = new VariableFolder(ClassGen cgen, ConstantPoolGen cpgen);
 		} catch(IOException e){
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void optimize()
-	{
-		ClassGen cgen = new ClassGen(original);
-		ConstantPoolGen cpgen = cgen.getConstantPool();
+	{//done I think
+
+		//don't need these as already defined above ^^	
+		//ClassGen cgen = new ClassGen(original);
+		//ConstantPoolGen cpgen = cgen.getConstantPool();
 
 		// Implement your optimization here
+		Method[] methods = cgen.getMethods();
+ 		for (Method m : methods){
+ 			optimizeMethod(cgen, cpgen, m);
+ 		}
         
 		this.optimized = gen.getJavaClass();
 	}
 
+	public void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method){//might need to extend this more
+			Code methodCode = method.getCode();
+			//run each optimiser on the method code - CHANGE SIMPLEFOLDER AND CONSTANTFOLDER TO INCLUDE AN OPTIMISE METHOD THAT TAKES IN A METHOD
+			Method foldedMethod = SimpleFolder.optimise(method);//are these in the right order? 
+			Method optimisedMethod = ConstantFolder.optimise(foldedMethod);
+			//replace the method in the original class with the optimised method
+			cgen.replaceMethod(method, optimisedMethod);
+	}
+
 	
 	public void write(String optimisedFilePath)
-	{
+	{//don't need to touch this method
 		this.optimize();
 
 		try {
