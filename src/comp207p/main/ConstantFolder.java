@@ -33,10 +33,10 @@ public class ConstantFolder
 		try{
 			this.parser = new ClassParser(classFilePath);
 			this.original = this.parser.parse();
-			this.cgen = new ClassGen(this.original);
-			this.cpgen = gen.getConstantPool();
-			this.SimpleFolder = new SimpleFolder(ClassGen cgen, ConstantPoolGen cpgen);
-			this.VariableFolder = new VariableFolder(ClassGen cgen, ConstantPoolGen cpgen);
+			this.gen = new ClassGen(this.original);
+			//this.cgen = gen.getConstantPool();
+			//this.SimpleFolder = new SimpleFolder(cgen, cpgen);
+			//this.VariableFolder = new VariableFolder(cgen, cpgen);
 		} catch(IOException e){
 			e.printStackTrace();
 		}
@@ -46,8 +46,10 @@ public class ConstantFolder
 	{//done I think
 
 		//don't need these as already defined above ^^	
-		//ClassGen cgen = new ClassGen(original);
-		//ConstantPoolGen cpgen = cgen.getConstantPool();
+		ClassGen cgen = new ClassGen(original);
+		ConstantPoolGen cpgen = cgen.getConstantPool();
+		SimpleFolder simpleFolder = new SimpleFolder(cgen, cpgen);
+		VariableFolder variableFolder = new VariableFolder(cgen, cpgen);
 
 		// Implement your optimization here
 		Method[] methods = cgen.getMethods();
@@ -60,9 +62,10 @@ public class ConstantFolder
 
 	public void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method){//might need to extend this more
 			Code methodCode = method.getCode();
-			//run each optimiser on the method code - CHANGE SIMPLEFOLDER AND CONSTANTFOLDER TO INCLUDE AN OPTIMISE METHOD THAT TAKES IN A METHOD
-			Method foldedMethod = SimpleFolder.optimise(method);//are these in the right order? 
-			Method optimisedMethod = ConstantFolder.optimise(foldedMethod);
+			//run each optimiser on the method code
+			//******* bugs here *********//
+			Method foldedMethod = SimpleFolder.optimiseMethod(method);
+			Method optimisedMethod = VariableFolder.optimiseMethod(foldedMethod);
 			//replace the method in the original class with the optimised method
 			cgen.replaceMethod(method, optimisedMethod);
 	}
