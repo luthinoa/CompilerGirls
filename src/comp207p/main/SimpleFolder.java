@@ -163,7 +163,7 @@ public class SimpleFolder{
 
         if (previousInstruction instanceof LDC) {
             LDC ldc = (LDC) previousInstruction;
-            Object value = ldc.getValue(constantPoolGen);
+            Object value = ldc.getValue(constPoolGen);
             if (value instanceof Number) {
                 secondNum = (Number) value;
             }
@@ -384,7 +384,7 @@ public class SimpleFolder{
         if (number == null) return false;
         firstNumType = firstNumType != null ? firstNumType : ((TypedInstruction) prevHandler.getInstruction()).getType(constPoolGen);
         Number num2 = null;
-        if (Comparer.isZeroComparison(nameOfIfInstruction)) {
+        if (nameOfIfInstruction.equals("EQUAL_ZERO") || nameOfIfInstruction.equals("NOT_EQUAL_ZERO") || nameOfIfInstruction.equals("GREATER_EQUAL_ZERO") || nameOfIfInstruction.equals("GREATER_ZERO") || nameOfIfInstruction.equals("LESS_EQUAL_ZERO") || nameOfIfInstruction.equals("LESS_ZERO")){
             secondNumType = null;
         } else {
             if (secondHandle == null) {
@@ -417,7 +417,7 @@ public class SimpleFolder{
                     return false;
                 }
 
-                boolean response = Comparer.performComparison(nameOfIfInstruction, firstNumType, secondNumType, number, num2);
+                boolean response = Comparer.comparisonFunction(nameOfIfInstruction, firstNumType, secondNumType, number, num2);
                 InstructionHandle maybeHandle = instructionHandle.getPrev();
                 InstructionHandle jump = instruction.getTarget();
                 InstructionHandle jumpWithElse = jumpTarget.getPrev();
