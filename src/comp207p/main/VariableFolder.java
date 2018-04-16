@@ -27,7 +27,7 @@ public class VariableFolder{
             if (instructionHandle.getNext() != null) {
                 Instruction nextInstruction = (instructionHandle.getNext()).getInstruction();
                 if (nextInstruction instanceof StoreInstruction) {
-                    updateVariables(currentInstruction, nextInstruction);
+                    updateVariables(currentInstruction, (StoreInstruction) nextInstruction);
                 }
             }
 
@@ -76,8 +76,48 @@ public class VariableFolder{
 
     }
 
-    private void updateVariables(Instruction currentInstruction, Instruction nextInstruction) {
+    private void updateVariables(Instruction currentInstruction, StoreInstruction nextInstruction) {
         System.out.println("updating variables....");
+        //update the constant store
+        int index = nextInstruction.getIndex();
+        Number value = getInstructionValue(currentInstruction);
+        if(value!=null){
+            System.out.println("Updating variables now");
+            variables.put(index, value);
+        }
+        else{
+            System.out.println("Removing variable");
+            variables.remove(index);
+        }
+    }
+
+    private Number getInstructionValue(Instruction instruction){
+        if(instruction instanceof LDC){
+            LDC ldc = (LDC) instruction;
+            Object value = ldc.getValue(this.cpg);
+            if (value instanceof Number) {
+                if(value!=null){
+                    System.out.println("Returning value");
+                    return (Number) value;
+                }
+                else{
+                    System.out.println("Value is null");
+                }
+            }
+        }
+        if(instruction instanceof LDC2_W){
+            LDC2_W ldc2_w = (LDC2_W) instruction;
+            Object value = ldc2_w.getValue(this.cpg);
+            if (value != null){
+                System.out.println("Returning value");
+                return (Number) value;
+            }
+            else{
+                System.out.println("Value is null");
+            }
+        }
+        System.out.println("Can't get value");
+        return null;
     }
 
     private void deleteVariable(InstructionList instructionList, InstructionHandle instructionHandle, InstructionHandle newHandle){
