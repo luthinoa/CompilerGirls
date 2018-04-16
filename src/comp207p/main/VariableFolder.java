@@ -80,8 +80,8 @@ public class VariableFolder{
             // TODO Auto-generated catch block
             e.printStackTrace();
             for(InstructionHandle target : e.getTargets()){
-                for(InstructionHandle targeter : target.getTargeters()){
-                    target.updateTarget(target, newHandle);
+                for(InstructionTargeter targeter : target.getTargeters()){
+                    targeter.updateTarget(target, newHandle);
                 }
             }
         } 
