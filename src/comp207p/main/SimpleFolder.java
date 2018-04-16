@@ -64,8 +64,10 @@ public class SimpleFolder{
                 optimised = optimised || this.ifInstruction(instructionList, instructionHandle);
             }
         }
-        System.out.println("Variable folding optimisation completed succesfully: ");
+        if(optimised = true){
+        System.out.println("Simple folding optimisation completed succesfully: ");
         System.out.println(optimised);
+    }
         /*
         if(!optimised){
             System.out.println("Returning original method...");
