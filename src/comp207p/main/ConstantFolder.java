@@ -59,6 +59,7 @@ public class ConstantFolder
 	}
 
 	public void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method){//might need to extend this more
+			System.out.println("********Optimising next method********");
 			SimpleFolder simpleFolder = new SimpleFolder(cgen, cpgen);
 			VariableFolder variableFolder = new VariableFolder(cgen, cpgen);
 
