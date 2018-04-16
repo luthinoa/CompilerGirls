@@ -68,12 +68,24 @@ public class VariableFolder{
 
     }
 
-    private void updateVariables() {
+    private void updateVariables(Instruction currentInstruction, Instruction nextInstruction) {
         //Lucy
     }
 
-    private void deleteVariable(){
-        //Lucy
+    private void deleteVariable(InstructionList instructionList, InstructionHandle instructionHandle, InstructionHandle newHandle){
+        try{
+            instructionList.delete(instructionHandle);
+        }
+        catch (TargetLostException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            for(InstructionHandle target : e.getTargets()){
+                for(InstructionHandle targeter : target.getTargeters()){
+                    target.updateTarget(target, newHandle);
+                }
+            }
+        } 
+        //list.setPositions(true);
     }
 
     private boolean isConstantVariable(int key, InstructionHandle instructionHandle, InstructionList instructionList){
