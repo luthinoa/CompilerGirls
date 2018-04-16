@@ -8,7 +8,9 @@ import org.apache.bcel.generic.Type;
  */
 public class Comparer {
 
-    public boolean comparisonFunction(
+    public Comparer () {}
+
+    public static boolean comparisonFunction(
             String comparisonType,
             Type firstNumType,
             Type secondNumType,
@@ -34,8 +36,6 @@ public class Comparer {
             }
 
         }
-
-
 
         if(comparisonType.equals("EQUAL")){
             switch(typeToCompare.toString()){

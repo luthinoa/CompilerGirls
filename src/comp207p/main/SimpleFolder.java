@@ -2,7 +2,6 @@ package comp207p.main;
 
 import com.sun.org.apache.bcel.internal.generic.*;
 import com.sun.org.apache.bcel.internal.generic.DCMPL;
-import com.sun.tools.hat.internal.util.Comparer;
 import com.sun.tools.internal.jxc.ap.Const;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.*;
@@ -13,9 +12,7 @@ import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.ConversionInstruction;
 import org.apache.bcel.generic.DADD;
 import org.apache.bcel.generic.DCMPG;
-import org.apache.bcel.generic.DCMPL;
 import org.apache.bcel.generic.DCMPG;
-import org.apache.bcel.generic.DCMPL;
 import org.apache.bcel.generic.FCMPG;
 import org.apache.bcel.generic.FCMPL;
 import org.apache.bcel.generic.FADD;
@@ -45,7 +42,6 @@ public class SimpleFolder{
 
     protected ClassGen classGen;
     protected ConstantPoolGen constPoolGen;
-    private Comparer comparer;
 
 
     public SimpleFolder(ClassGen classGen, ConstantPoolGen constPoolGen) {
@@ -98,9 +94,9 @@ public class SimpleFolder{
         } else if (typeOfInstruction.equals(Type.FLOAT)) {
             instructionToPush = new LDC(constPoolGen.addFloat(valueOfInstruction.floatValue()));
         } else if (typeOfInstruction.equals(Type.LONG)) {
-            instructionToPush = new LDC2_W(constPoolGen.addInteger(valueOfInstruction.longValue()));
+            instructionToPush = new LDC2_W(constPoolGen.addLong(valueOfInstruction.longValue()));
         } else if (typeOfInstruction.equals(Type.DOUBLE)) {
-            instructionToPush = new LDC2_W(constPoolGen.addInteger(valueOfInstruction.doubleValue()));
+            instructionToPush = new LDC2_W(constPoolGen.addDouble(valueOfInstruction.doubleValue()));
         } else {
             return false;
         }
@@ -267,7 +263,7 @@ public class SimpleFolder{
         }
 
         if (type.equals(Type.FLOAT)) {
-            i = this.constPoolGen.addLong((float)firstNum-(float)secondNum);
+            i = this.constPoolGen.addFloat((float)firstNum-(float)secondNum);
         }
 
         if (type.equals(Type.DOUBLE)) {
@@ -288,7 +284,7 @@ public class SimpleFolder{
         }
 
         if (type.equals(Type.FLOAT)) {
-            i = this.constPoolGen.addLong((float)firstNum*(float)secondNum);
+            i = this.constPoolGen.addFloat((float)firstNum*(float)secondNum);
         }
 
         if (type.equals(Type.DOUBLE)) {
@@ -309,7 +305,7 @@ public class SimpleFolder{
         }
 
         if (type.equals(Type.FLOAT)) {
-            i = this.constPoolGen.addLong((float)firstNum / (float)secondNum);
+            i = this.constPoolGen.addFloat((float)firstNum / (float)secondNum);
         }
 
         if (type.equals(Type.DOUBLE)) {
@@ -413,15 +409,14 @@ public class SimpleFolder{
                     num2 = push.getValue();
                 }
 
-                num2 = num2 != null ? num2 : ((TypedInstruction) secondHandle.getInstruction()).getType(constPoolGen);
+                secondNumType = secondNumType != null ? secondNumType : ((TypedInstruction) secondHandle.getInstruction()).getType(constPoolGen);
                 if(num2 == null) {
                     return false;
                 }
-
                 boolean response = Comparer.comparisonFunction(nameOfIfInstruction, firstNumType, secondNumType, number, num2);
                 InstructionHandle maybeHandle = instructionHandle.getPrev();
-                InstructionHandle jump = instruction.getTarget();
-                InstructionHandle jumpWithElse = jumpTarget.getPrev();
+                InstructionHandle jump = ifInstruction.getTarget();
+                InstructionHandle jumpWithElse = jump.getPrev();
                 InstructionHandle newHandle;
                 if (response) {
                     newHandle = instructionHandle.getNext();
