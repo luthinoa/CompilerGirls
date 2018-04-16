@@ -45,6 +45,7 @@ public class SimpleFolder{
 
     protected ClassGen classGen;
     protected ConstantPoolGen constPoolGen;
+    private Comparer comparer;
 
 
     public SimpleFolder(ClassGen classGen, ConstantPoolGen constPoolGen) {

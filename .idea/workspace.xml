@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e454705-f015-4423-b326-61d66853b289" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/CompilerGirls.iml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/comp207p/main/Comparer.java" afterPath="$PROJECT_DIR$/src/comp207p/main/Comparer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/comp207p/main/SimpleFolder.java" afterPath="$PROJECT_DIR$/src/comp207p/main/SimpleFolder.java" />
     </list>
@@ -26,9 +22,11 @@
       <file leaf-file-name="SimpleFolder.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/comp207p/main/SimpleFolder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="419" column="54" lean-forward="true" selection-start-line="419" selection-start-column="54" selection-end-line="419" selection-end-column="54" />
-              <folding />
+            <state relative-caret-position="540">
+              <caret line="427" column="54" lean-forward="true" selection-start-line="427" selection-start-column="54" selection-end-line="427" selection-end-column="54" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -36,8 +34,8 @@
       <file leaf-file-name="Comparer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/comp207p/main/Comparer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="44" lean-forward="false" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
+            <state relative-caret-position="135">
+              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -295,17 +293,19 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/comp207p/main/Comparer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="44" lean-forward="false" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
+        <state relative-caret-position="135">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/comp207p/main/SimpleFolder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="419" column="54" lean-forward="true" selection-start-line="419" selection-start-column="54" selection-end-line="419" selection-end-column="54" />
-          <folding />
+        <state relative-caret-position="540">
+          <caret line="427" column="54" lean-forward="true" selection-start-line="427" selection-start-column="54" selection-end-line="427" selection-end-column="54" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

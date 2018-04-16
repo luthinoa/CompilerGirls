@@ -8,7 +8,7 @@ import org.apache.bcel.generic.Type;
  */
 public class Comparer {
 
-    public static boolean comparisonFunction(
+    public boolean comparisonFunction(
             String comparisonType,
             Type firstNumType,
             Type secondNumType,
