@@ -1,8 +1,8 @@
 package comp207p.main;
 
-import com.sun.org.apache.bcel.internal.generic.*;
-import com.sun.org.apache.bcel.internal.generic.DCMPL;
-import com.sun.tools.internal.jxc.ap.Const;
+//import com.sun.org.apache.bcel.internal.generic.*;
+//import com.sun.org.apache.bcel.internal.generic.DCMPL;
+//import com.sun.tools.internal.jxc.ap.Const;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.*;
 import org.apache.bcel.generic.ArithmeticInstruction;
@@ -49,6 +49,30 @@ public class SimpleFolder{
         this.constPoolGen = constPoolGen;
     }
 
+    Method optimiseMethod(Method method, MethodGen mg, InstructionList instructionList) throws TargetLostException{
+        System.out.println("SimpleFolder optimiseMethod called");
+        boolean optimised = false;
+        for(InstructionHandle instructionHandle : instructionList.getInstructionHandles()){
+            Instruction currentInstruction = instructionHandle.getInstruction();
+            if(currentInstruction instanceof ConversionInstruction){
+                optimised = optimised || this.conversion(instructionList, instructionHandle);
+            }
+            else if(currentInstruction instanceof ArithmeticInstruction){
+                optimised = optimised || this.arithmetic(instructionList, instructionHandle);
+            }
+            else if(currentInstruction instanceof IfInstruction){
+                optimised = optimised || this.ifInstruction(instructionList, instructionHandle);
+            }
+        }
+        System.out.println("Variable folding optimisation completed succesfully: ");
+        System.out.println(optimised);
+        /*
+        if(!optimised){
+            System.out.println("Returning original method...");
+        }
+        */
+        return optimised ? mg.getMethod() : null;
+    }
     private boolean conversion(InstructionList listOfInstructions, InstructionHandle instructionHandle) throws TargetLostException {
         ConversionInstruction instruction = (ConversionInstruction) instructionHandle.getInstruction();
         Type typeOfInstruction = instruction.getType(this.constPoolGen);
