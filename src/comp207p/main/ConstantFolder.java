@@ -69,25 +69,22 @@ public class ConstantFolder
 			MethodGen mg = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instructionList, cpgen);
 			Method optimisedMethod = method;
 			//run each optimiser on the method
+			optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
+
+			methodCode = optimisedMethod.getCode();
+			instructionList = new InstructionList(methodCode.getCode());
+			mg = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instructionList, cpgen);
+
 			try{
             	optimisedMethod = simpleFolder.optimiseMethod(method, mg, instructionList);
-            	System.out.println("simpleFolder called successfully");
         	}
         	catch (TargetLostException e){
             	// TODO Auto-generated catch block
+            	System.out.println("simpleFolder not called successfully");
             	e.printStackTrace();
             }
 			
-			optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
-
-			if(optimisedMethod!=null){
-				System.out.println("full optimisation completed");
-			}
-			else{
-				System.out.println("full optimisation not completed");
-			}
-			System.out.println("replacing methods...");
-
+			
 			//replace the method in the original class with the optimised method
 			cgen.replaceMethod(method, optimisedMethod);
 	}
