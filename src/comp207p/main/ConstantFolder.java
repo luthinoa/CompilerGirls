@@ -69,6 +69,14 @@ public class ConstantFolder
 			
 			//run each optimiser on the method
 			Method optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
+
+			if(optimisedMethod!=null){
+				System.out.println("optimisation succesful");
+			}
+			else{
+				System.out.println("optimisation unsuccessful");
+			}
+			System.out.println("replacing methods...");
 			//Simplefolder??? 
 
 			//replace the method in the original class with the optimised method

@@ -19,6 +19,7 @@ public class VariableFolder{
     }
 
     Method optimiseMethod(Method method, MethodGen mg, InstructionList instructionList) {
+        System.out.println("optimisedMethod in variableFolder has been called");
         boolean optimised = false;
         variables = new HashMap<>();
         for (InstructionHandle instructionHandle : instructionList.getInstructionHandles()) {
@@ -36,11 +37,18 @@ public class VariableFolder{
                 optimised = optimised || arithmeticOptimised;
             }
         }
-        return optimised ? mg.getMethod() : null;
+        System.out.println("Variable folding optimisation completed succesfully: ");
+        System.out.println(optimised);
+        if(!optimised){
+            System.out.println("Returning original method...");
+        }
+        //return optimised ? mg.getMethod() : null;
+        return mg.getMethod();
     }
 
     //Will replace load instructions for a push for constant variables
     private boolean propagateVariable(InstructionHandle instructionHandle, InstructionList instructionList) {
+        System.out.println("propagating variables...");
         LoadInstruction loadInstruction = (LoadInstruction) instructionHandle.getInstruction();
         int key = loadInstruction.getIndex();
 
@@ -69,7 +77,7 @@ public class VariableFolder{
     }
 
     private void updateVariables(Instruction currentInstruction, Instruction nextInstruction) {
-        //Lucy
+        System.out.println("updating variables....");
     }
 
     private void deleteVariable(InstructionList instructionList, InstructionHandle instructionHandle, InstructionHandle newHandle){
@@ -85,7 +93,7 @@ public class VariableFolder{
                 }
             }
         } 
-        //list.setPositions(true);
+        instructionList.setPositions(true);
     }
 
     private boolean isConstantVariable(int key, InstructionHandle instructionHandle, InstructionList instructionList){
