@@ -61,11 +61,16 @@ public class ConstantFolder
 	}
 
 	public void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method){//might need to extend this more
+			VariableFolder variableFolder = new VariableFolder(cgen, cpgen);
+			//initialise methodCode, instructionList, methodGen for the current method
 			Code methodCode = method.getCode();
-			//run each optimiser on the method code
-			//******* bugs here *********//
-			Method foldedMethod = SimpleFolder.optimiseMethod(method);
-			Method optimisedMethod = VariableFolder.optimiseMethod(foldedMethod);
+			InstructionList instructionList = new InstructionList(methodCode.getCode());	
+			MethodGen mg = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instructionList, cpgen);
+			
+			//run each optimiser on the method
+			Method optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
+			//Simplefolder??? 
+
 			//replace the method in the original class with the optimised method
 			cgen.replaceMethod(method, optimisedMethod);
 	}
