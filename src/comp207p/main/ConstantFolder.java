@@ -48,8 +48,6 @@ public class ConstantFolder
 		//don't need these as already defined above ^^	
 		ClassGen cgen = new ClassGen(original);
 		ConstantPoolGen cpgen = cgen.getConstantPool();
-		SimpleFolder simpleFolder = new SimpleFolder(cgen, cpgen);
-		VariableFolder variableFolder = new VariableFolder(cgen, cpgen);
 
 		// Implement your optimization here
 		Method[] methods = cgen.getMethods();
@@ -61,23 +59,33 @@ public class ConstantFolder
 	}
 
 	public void optimizeMethod(ClassGen cgen, ConstantPoolGen cpgen, Method method){//might need to extend this more
+			SimpleFolder simpleFolder = new SimpleFolder(cgen, cpgen);
 			VariableFolder variableFolder = new VariableFolder(cgen, cpgen);
+
 			//initialise methodCode, instructionList, methodGen for the current method
 			Code methodCode = method.getCode();
 			InstructionList instructionList = new InstructionList(methodCode.getCode());	
 			MethodGen mg = new MethodGen(method.getAccessFlags(), method.getReturnType(), method.getArgumentTypes(), null, method.getName(), cgen.getClassName(), instructionList, cpgen);
-			
+			Method optimisedMethod = method;
 			//run each optimiser on the method
-			Method optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
+			try{
+            	optimisedMethod = simpleFolder.optimiseMethod(method, mg, instructionList);
+            	System.out.println("simpleFolder called successfully");
+        	}
+        	catch (TargetLostException e){
+            	// TODO Auto-generated catch block
+            	e.printStackTrace();
+            }
+			
+			optimisedMethod = variableFolder.optimiseMethod(method, mg, instructionList);
 
 			if(optimisedMethod!=null){
-				System.out.println("optimisation succesful");
+				System.out.println("full optimisation completed");
 			}
 			else{
-				System.out.println("optimisation unsuccessful");
+				System.out.println("full optimisation not completed");
 			}
 			System.out.println("replacing methods...");
-			//Simplefolder??? 
 
 			//replace the method in the original class with the optimised method
 			cgen.replaceMethod(method, optimisedMethod);
