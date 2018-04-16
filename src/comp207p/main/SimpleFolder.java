@@ -128,10 +128,8 @@ public class SimpleFolder{
         }
 
         InstructionHandle replacementInstructionHandle = listOfInstructions.insert(instructionHandle, instructionToPush);
-        listOfInstructions.delete(instructionHandle);
-        listOfInstructions.setPositions(true);
-        listOfInstructions.delete(previousInstructionHandle);
-        listOfInstructions.setPositions(true);
+        tryDelete(listOfInstructions,instructionHandle,replacementInstructionHandle);
+        tryDelete(listOfInstructions,previousInstructionHandle,replacementInstructionHandle);
 
         return true;
     }
@@ -144,11 +142,11 @@ public class SimpleFolder{
             return false;
         }
 
-        InstructionHandle previousInstructionHandle = instructionHandle.getPrev();
-        InstructionHandle twoPreviousInstructionHandle = previousInstructionHandle.getPrev();
+        InstructionHandle previousInstructionHandle = instructionHandle.getPrev(); //handle2
+        InstructionHandle twoPreviousInstructionHandle = previousInstructionHandle.getPrev(); //handle1
 
-        Instruction previousInstruction = previousInstructionHandle.getInstruction();
-        Instruction twoPreviousInstruction = twoPreviousInstructionHandle.getInstruction();
+        Instruction previousInstruction = previousInstructionHandle.getInstruction();//handle2
+        Instruction twoPreviousInstruction = twoPreviousInstructionHandle.getInstruction();//handle1
 
         Number firstNum = null;
         // find the value according to instance of instruction
@@ -221,12 +219,9 @@ public class SimpleFolder{
 
         InstructionHandle handle2 = listOfInstructions.insert(instructionHandle, instruction2);
 
-        listOfInstructions.delete(instructionHandle);
-        listOfInstructions.setPositions(true);
-        listOfInstructions.delete(previousInstructionHandle);
-        listOfInstructions.setPositions(true);
-        listOfInstructions.delete(twoPreviousInstructionHandle);
-        listOfInstructions.setPositions(true);
+        tryDelete(listOfInstructions, instructionHandle, handle2);
+        tryDelete(listOfInstructions, previousInstructionHandle, handle2);
+        tryDelete(listOfInstructions, twoPreviousInstructionHandle, handle2);
 
         return true;
     }
@@ -463,6 +458,30 @@ public class SimpleFolder{
 
     return false;
     }
+
+
+    protected void tryDelete(InstructionList list, InstructionHandle handle) throws TargetLostException {
+        tryDelete(list, handle, null);
+    }
+
+    protected void tryDelete(InstructionList list, InstructionHandle handle, InstructionHandle replacement) throws TargetLostException {
+        if (handle == null) return;
+        list.delete(handle);
+
+        list.setPositions(true);
+    }
+
+
+    protected void tryDelete(InstructionList list, InstructionHandle from,
+                                 InstructionHandle to,
+                                 InstructionHandle replacement) throws TargetLostException {
+        if (from == null || to == null) return;
+        list.delete(from, to);
+        list.setPositions(true);
+    }
+
+
+
 }
 
 
