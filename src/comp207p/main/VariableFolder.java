@@ -19,28 +19,26 @@ public class VariableFolder{
     }
 
     Method optimiseMethod(Method method, MethodGen mg, InstructionList instructionList) {
-        System.out.println("optimisedMethod in variableFolder has been called");
         boolean optimised = false;
+        Method oldMethod = method;
         variables = new HashMap<>();
-        for (InstructionHandle instructionHandle : instructionList.getInstructionHandles()) {
-            Instruction currentInstruction = instructionHandle.getInstruction();
-            if (instructionHandle.getNext() != null) {
-                Instruction nextInstruction = (instructionHandle.getNext()).getInstruction();
-                if (nextInstruction instanceof StoreInstruction) {
-                    updateVariables(currentInstruction, (StoreInstruction) nextInstruction);
-                }
-            }
+        while(!optimised){
+          oldMethod=mg.getMethod();
+          for (InstructionHandle instructionHandle : instructionList.getInstructionHandles()) {
+              Instruction currentInstruction = instructionHandle.getInstruction();
+              if (instructionHandle.getNext() != null) {
+                  Instruction nextInstruction = (instructionHandle.getNext()).getInstruction();
+                  if (nextInstruction instanceof StoreInstruction) {
+                      updateVariables(currentInstruction, (StoreInstruction) nextInstruction);
+                  }
+              }
 
-            //constant variable propagation
-            if ((currentInstruction instanceof LoadInstruction)&&!(currentInstruction instanceof ALOAD)) {
-                boolean arithmeticOptimised = propagateVariable(instructionHandle, instructionList);
-                optimised = optimised || arithmeticOptimised;
-            }
-        }
-        System.out.println("Variable folding optimisation completed succesfully: ");
-        System.out.println(optimised);
-        if(!optimised){
-            System.out.println("Returning original method...");
+              //constant variable propagation
+              if ((currentInstruction instanceof LoadInstruction)&&!(currentInstruction instanceof ALOAD)) {
+                  boolean arithmeticOptimised = propagateVariable(instructionHandle, instructionList);
+              }
+          }
+          if(mg.getMethod().equals(method)){optimised=true;} //No more optimisations can occur
         }
         //return optimised ? mg.getMethod() : null;
         return mg.getMethod();
@@ -59,6 +57,7 @@ public class VariableFolder{
         if(loopAffectedVariable(key, instructionList, instructionHandle)){
             return false;
         }
+
         Number num = this.variables.get(key);
         Instruction newInstruction = null;
         if (num instanceof Double) {
@@ -70,6 +69,7 @@ public class VariableFolder{
         } else if (num instanceof Integer) {
             newInstruction = new LDC(cpg.addInteger(num.intValue()));
         }
+
         InstructionHandle newHandle = instructionList.append(instructionHandle, newInstruction);
         deleteVariable(instructionList, instructionHandle, newHandle);
         return true;
@@ -77,48 +77,93 @@ public class VariableFolder{
     }
 
     private void updateVariables(Instruction currentInstruction, StoreInstruction nextInstruction) {
-        System.out.println("updating variables....");
-        //update the constant store
-        int index = nextInstruction.getIndex();
-        Number value = getInstructionValue(currentInstruction);
-        if(value!=null){
-            System.out.println("Updating variables now");
-            variables.put(index, value);
-        }
-        else{
-            System.out.println("Removing variable");
-            variables.remove(index);
-        }
-    }
+      int index = nextInstruction.getIndex();
+      Number value = getInstructionValue(currentInstruction);
+       if (value != null) {
+         System.out.println("not null");
+           this.variables.put(index, value);
+       } else {
+           this.variables.remove(index);
+       }
+   }
 
-    private Number getInstructionValue(Instruction instruction){
-        if(instruction instanceof LDC){
-            LDC ldc = (LDC) instruction;
-            Object value = ldc.getValue(this.cpg);
-            if (value instanceof Number) {
-                if(value!=null){
-                    System.out.println("Returning value");
-                    return (Number) value;
-                }
-                else{
-                    System.out.println("Value is null");
-                }
-            }
+    private Number getInstructionValue(Instruction currentInstruction){
+      try {
+           if (currentInstruction instanceof LDC) {
+               LDC ldc = (LDC) currentInstruction;
+                Object maybeValue = ldc.getValue(this.cpg);
+               if (maybeValue instanceof Number) {
+                   return (Number) maybeValue;
+               }
+           }
+           if (currentInstruction instanceof LDC2_W) {
+               LDC2_W ldc2_w = (LDC2_W) currentInstruction;
+               //if (extractArithmeticType(ldc2_w.getType(constPoolGen)) != ArithmeticType.OTHER) {
+                   return ldc2_w.getValue(this.cpg);
+               //}
+           }
+       } catch (Exception e) {
+           System.out.println("Error");
+            return null;
+       }
+       if (currentInstruction instanceof ConstantPushInstruction) {
+           ConstantPushInstruction push = (ConstantPushInstruction) currentInstruction;
+           return push.getValue();
+       }
+       return null;
+     }
+
+        /*
+        if(instruction instanceof DSTORE){
+          System.out.println("double");
         }
-        if(instruction instanceof LDC2_W){
-            LDC2_W ldc2_w = (LDC2_W) instruction;
-            Object value = ldc2_w.getValue(this.cpg);
-            if (value != null){
-                System.out.println("Returning value");
-                return (Number) value;
-            }
-            else{
-                System.out.println("Value is null");
-            }
+
+        else if(instruction instanceof FSTORE){
+          System.out.println("float");
         }
-        System.out.println("Can't get value");
-        return null;
-    }
+
+        else if(instruction instanceof LSTORE){
+          System.out.println("long");
+        }
+
+        else if(instruction instanceof ISTORE){
+          System.out.println("int");
+        }
+
+        if(instruction instanceof StoreInstruction){
+          System.out.println("store");
+        }        else{
+          System.out.println("can't get val");;
+        }
+      //  System.out.println("can't get val");
+        //return null;
+      if (instruction instanceof LDC) {
+              System.out.println("ldc");
+          LDC ldc = (LDC) instruction;
+          Object value = ldc.getValue(cpg);
+          if (value instanceof Number) {
+              return (Number) value;
+          }
+      }
+      if (instruction instanceof LDC2_W) {
+              System.out.println("ldc2w");
+          LDC2_W ldc2_w = (LDC2_W) instruction;
+        //  if (extractArithmeticType(ldc2_w.getType(cpg)) != ArithmeticType.OTHER) {
+        //      return ldc2_w.getValue(cpg);
+        //  }
+      }
+      else if (instruction instanceof ConstantPushInstruction) {
+            System.out.println("constant push");
+        ConstantPushInstruction push = (ConstantPushInstruction) instruction;
+        return push.getValue();
+    }else {
+      System.out.println("Could not extract constant!");
+      return null;
+  }
+
+  return null;*/
+
+    //}
 
     private void deleteVariable(InstructionList instructionList, InstructionHandle instructionHandle, InstructionHandle newHandle){
         try{
@@ -132,7 +177,7 @@ public class VariableFolder{
                     targeter.updateTarget(target, newHandle);
                 }
             }
-        } 
+        }
         instructionList.setPositions(true);
     }
 
