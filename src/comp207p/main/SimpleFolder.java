@@ -127,7 +127,6 @@ public class SimpleFolder{
             return false;
         }
 
-
         InstructionHandle replacementInstructionHandle = listOfInstructions.insert(instructionHandle, instructionToPush);
         listOfInstructions.delete(instructionHandle);
         listOfInstructions.setPositions(true);
@@ -141,7 +140,7 @@ public class SimpleFolder{
         ArithmeticInstruction instruction = (ArithmeticInstruction) instructionHandle.getInstruction();
         Type typeOfInstruction = instruction.getType(this.constPoolGen);
 
-        if (!typeOfInstruction.equals(Type.INT) || !typeOfInstruction.equals(Type.LONG) || !typeOfInstruction.equals(Type.FLOAT) || !typeOfInstruction.equals(Type.DOUBLE)) {
+        if (!typeOfInstruction.equals(Type.INT) && !typeOfInstruction.equals(Type.LONG) && !typeOfInstruction.equals(Type.FLOAT) && !typeOfInstruction.equals(Type.DOUBLE)) {
             return false;
         }
 
@@ -154,19 +153,19 @@ public class SimpleFolder{
         Number firstNum = null;
         // find the value according to instance of instruction
 
-        if (previousInstruction instanceof LDC) {
-            LDC ldc = (LDC) previousInstruction;
+        if (twoPreviousInstruction instanceof LDC) {
+            LDC ldc = (LDC) twoPreviousInstruction;
             Object value = ldc.getValue(constPoolGen);
             if (value instanceof Number) {
                 firstNum = (Number) value;
             }
         }
-        if (previousInstruction instanceof ConstantPushInstruction) {
-            ConstantPushInstruction push = (ConstantPushInstruction) previousInstruction;
+        if (twoPreviousInstruction instanceof ConstantPushInstruction) {
+            ConstantPushInstruction push = (ConstantPushInstruction) twoPreviousInstruction;
             firstNum = push.getValue();
         }
-        if (previousInstruction instanceof LDC2_W) {
-            LDC2_W ldc2_w = (LDC2_W) previousInstruction;
+        if (twoPreviousInstruction instanceof LDC2_W) {
+            LDC2_W ldc2_w = (LDC2_W) twoPreviousInstruction;
             Type tempType = ldc2_w.getType(constPoolGen);
 
             if (tempType.equals(Type.INT) || tempType.equals(Type.LONG) || tempType.equals(Type.DOUBLE) || tempType.equals(Type.FLOAT)) {
@@ -345,7 +344,7 @@ public class SimpleFolder{
         IfInstruction ifInstruction = (IfInstruction) instructionHandle.getInstruction();
         String nameOfIfInstruction = ifInstruction.getClass().getSimpleName();
 
-        if(!nameOfIfInstruction.equals("IF_ACMPEQ") || !nameOfIfInstruction.equals("IF_ICMPEQ") ||!nameOfIfInstruction.equals("IF_ACMPNE") ||!nameOfIfInstruction.equals("IF_ICMPGT") ||!nameOfIfInstruction.equals("IF_ICMPLE") ||!nameOfIfInstruction.equals("IF_ICMPLT") || !nameOfIfInstruction.equals("IFEQ")||!nameOfIfInstruction.equals("IFNE")||!nameOfIfInstruction.equals("IFGT")||!nameOfIfInstruction.equals("IFLE")||!nameOfIfInstruction.equals("IFLT")||!nameOfIfInstruction.equals("IFGE")||!nameOfIfInstruction.equals("IFNONNULL")||!nameOfIfInstruction.equals("IFNULL")) {
+        if(!nameOfIfInstruction.equals("IF_ACMPEQ") && !nameOfIfInstruction.equals("IF_ICMPEQ") && !nameOfIfInstruction.equals("IF_ACMPNE") &&!nameOfIfInstruction.equals("IF_ICMPGT") &&!nameOfIfInstruction.equals("IF_ICMPLE") &&!nameOfIfInstruction.equals("IF_ICMPLT") && !nameOfIfInstruction.equals("IFEQ")&&!nameOfIfInstruction.equals("IFNE")&&!nameOfIfInstruction.equals("IFGT")&&!nameOfIfInstruction.equals("IFLE")&&!nameOfIfInstruction.equals("IFLT")&&!nameOfIfInstruction.equals("IFGE")&&!nameOfIfInstruction.equals("IFNONNULL")&&!nameOfIfInstruction.equals("IFNULL")) {
             return false;
         }
 
@@ -462,13 +461,7 @@ public class SimpleFolder{
             }
         }
 
-
     return false;
-
-
-
-
-
     }
 }
 
