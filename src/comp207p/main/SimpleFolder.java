@@ -242,7 +242,7 @@ public class SimpleFolder{
         }
 
         if (type.equals(Type.FLOAT)) {
-            i = this.constPoolGen.addLong((float)firstNum+(float)secondNum);
+            i = this.constPoolGen.addFloat((float)firstNum+(float)secondNum);
         }
 
         if (type.equals(Type.DOUBLE)) {
