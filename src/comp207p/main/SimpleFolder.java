@@ -399,9 +399,11 @@ public class SimpleFolder{
         }
 
         if (number == null) return false;
+
         firstNumType = firstNumType != null ? firstNumType : ((TypedInstruction) prevHandler.getInstruction()).getType(constPoolGen);
         Number num2 = null;
         if (nameOfIfInstruction.equals("EQUAL_ZERO") || nameOfIfInstruction.equals("NOT_EQUAL_ZERO") || nameOfIfInstruction.equals("GREATER_EQUAL_ZERO") || nameOfIfInstruction.equals("GREATER_ZERO") || nameOfIfInstruction.equals("LESS_EQUAL_ZERO") || nameOfIfInstruction.equals("LESS_ZERO")){
+
             secondNumType = null;
         } else {
             if (secondHandle == null) {
@@ -440,19 +442,27 @@ public class SimpleFolder{
                 InstructionHandle newHandle;
                 if (response) {
                     newHandle = instructionHandle.getNext();
-                    instructionList.delete(newHandle);
-                    instructionList.setPositions(true);
-                    instructionList.delete(newHandle);
-                    instructionList.setPositions(true);
+                    InstructionHandle elseDone = ((GotoInstruction) jumpWithElse.getInstruction()).getTarget();
+                    tryDelete(instructionList, instructionHandle, newHandle);
+                    tryDelete(instructionList, jumpWithElse, elseDone.getPrev(), newHandle);
 
                 } else {
-                    //look for goto, then delete everything from and including if to goto and including
-                    instructionList.delete(instructionHandle);
-                    instructionList.setPositions(true);
+                    tryDelete(instructionList, instructionHandle, jumpWithElse, jump);
                     newHandle = jump;
                 }
 
-                return true;
+                if ( instruction instanceof DCMPG || instruction instanceof org.apache.bcel.generic.DCMPL || instruction instanceof FCMPG || instruction instanceof FCMPL || instruction instanceof LCMP) {
+                    tryDelete(instructionList, maybeHandle, newHandle);
+                }
+                tryDelete(instructionList, prevHandler, newHandle);
+
+                if (!nameOfIfInstruction.equals("EQUAL_ZERO") && !nameOfIfInstruction.equals("NOT_EQUAL_ZERO") && !nameOfIfInstruction.equals("GREATER_EQUAL_ZERO") && !nameOfIfInstruction.equals("GREATER_ZERO") && !nameOfIfInstruction.equals("LESS_EQUAL_ZERO") && !nameOfIfInstruction.equals("LESS_ZERO")){
+                    tryDelete(instructionList, secondHandle, newHandle);
+                }
+
+
+
+                    return true;
             }
         }
 
